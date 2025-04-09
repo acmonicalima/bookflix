@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookflix</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #141414;
+      color: #fff;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 10px 10px;
+    }
+
+    .logo {
+      width: 150px;
+      border-radius: 10px;
+    }
+
+    .slogan {
+      font-size: 1.2rem;
+      margin-top: 10px;
+    }
+
+    .school {
+      font-size: 1rem;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    .frase {
+      background-color: #222;
+      padding: 10px;
+      font-style: italic;
+      font-size: 1rem;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    main {
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    form {
+      max-width: 300px;
+      margin: 20px auto;
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    form input, form select {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+
+    form button {
+      width: 100%;
+      padding: 10px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    form a {
+      color: white;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    form a:hover {
+      color: #e50914;
+    }
+
+    .livros {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .card h3 {
+      margin: 10px 0 5px;
+    }
+
+    .card .sinopse {
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .card .estoque {
+      font-size: 0.9rem;
+      margin: 5px 0;
+    }
+
+    .card button {
+      width: 48%;
+      padding: 8px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-emprestar { background-color: #e50914; color: white; }
+    .btn-devolver { background-color: #444; color: white; }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+      padding: 20px 10px;
+      background: #0d0d0d;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .card img { height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="imagens/logobookflix.JPG" class="logo" alt="Logo Bookflix" />
+    <div class="slogan">Maratonando Livros</div>
+    <div class="school">CIEP BRIZOLÃO 183 - JOÃO VITTA</div>
+    <div class="frase" id="frase"></div>
+  </header>
+
+  <main>
+    <!-- Login -->
+    <section id="login">
+      <form onsubmit="event.preventDefault(); fazerLogin()">
+        <h2>Login</h2>
+        <input type="text" id="loginNome" placeholder="Nome completo" required />
+        <input type="date" id="loginNascimento" required />
+        <button type="submit">Entrar</button>
+        <p style="text-align:center; margin-top:10px;">
+          <a onclick="mostrarCadastro()">Não tem cadastro? Clique aqui</a>
+        </p>
+      </form>
+    </section>
+
+    <!-- Cadastro -->
+    <section id="cadastro" class="hidden">
+      <form onsubmit="event.preventDefault(); fazerCadastro()">
+        <h2>Cadastro</h2>
+        <input type="text" id="cadNome" placeholder="Nome completo" required />
+        <input type="date" id="cadNascimento" required />
+        <select id="cadTipo" required>
+          <option value="">Você é...</option>
+          <option value="aluno">Aluno</option>
+          <option value="professor">Professor</option>
+          <option value="admin">Administrador</option>
+        </select>
+        <button type="submit">Cadastrar</button>
+        <p style="text-align:center; margin-top:10px;">
+          <a onclick="mostrarLogin()">Já tem cadastro? Voltar ao login</a>
+        </p>
+      </form>
+    </section>
+
+    <!-- Livros -->
+    <section id="vitrine" class="hidden">
+      <h2 style="text-align:center;">Livros disponíveis</h2>
+      <div class="livros" id="livrosContainer"></div>
+    </section>
+  </main>
+
+  <footer>
+    © 2025 Mônica Lima<br/>
+    Animação Cultural
+  </footer>
+
+  <script>
+    const frases = [
+      `"A leitura é, provavelmente, uma outra maneira de estar em um lugar." — José Saramago`,
+      `"Um livro, uma caneta, uma criança e um professor podem mudar o mundo." — Malala Yousafzai`,
+      `"A leitura engrandece a alma." — Voltaire`,
+      `"Ler é sonhar pela mão de outro." — Fernando Pessoa`,
+      `"Quem compartilha um livro, compartilha um universo." — Desconhecido`,
+      `"A leitura é uma viagem sem fim." — Anônimo`,
+      `"Os livros são os nossos melhores amigos." — Anônimo`,
+      `"Ler é viver mil vidas em uma só." — Anônimo`,
+      `"Um livro é um sonho que você pode segurar na mão." — Neil Gaiman`,
+      `"A leitura é a chave para a liberdade." — Oprah Winfrey`,
+      `"Cada livro é um mundo a ser explorado." — Anônimo`
+    ];
+    document.getElementById("frase").innerText = frases[Math.floor(Math.random() * frases.length)];
+  
+    let usuarioLogado = null;
+    const livros = [
+      { titulo: "Ao meu amigo Caio", autor: "Sandra Saruê", imagem: "amigocaio.jpeg", estoque: 1, destaque: true, sinopse: "Uma homenagem tocante à amizade e memória." },
+      { titulo: "MALALA", autor: "MALALA", imagem: "malala.jpeg", estoque: 10, sinopse: "A incrível história de uma menina que defendeu o direito à educação." },
+      { titulo: "Na minha Pele", autor: "Lázaro Ramos", imagem: "naminhapele.jpeg", estoque: 10, sinopse: "Reflexões sinceras sobre identidade e sociedade." },
+      { titulo: "O Pequeno Príncipe", autor: "Antoine de Saint-Exupéry", imagem: "pequenoprincipe.jpeg", estoque: 1, sinopse: "Um clássico que nos faz olhar o mundo com o coração." },
+      { titulo: "O sol é para todos", autor: "Desconhecido", imagem: "osoleparatodos.jpg", estoque: 10, sinopse: "Uma história comovente sobre justiça e empatia." },
+      { titulo: "O Caçador de Pipas", autor: "Desconhecido", imagem: "ocacadordepipas.jpeg", estoque: 5, sinopse: "Amizade, perdão e redenção no Afeganistão." }
+    ];
+  
+    const mapaDeEmprestimos = {};
+  
+    function mostrarCadastro() {
+      document.getElementById("login").classList.add("hidden");
+      document.getElementById("cadastro").classList.remove("hidden");
+    }
+  
+    function mostrarLogin() {
+      document.getElementById("cadastro").classList.add("hidden");
+      document.getElementById("login").classList.remove("hidden");
+    }
+  
+    function fazerCadastro() {
+      const nome = document.getElementById("cadNome").value;
+      const nascimento = document.getElementById("cadNascimento").value;
+      const tipo = document.getElementById("cadTipo").value;
+      localStorage.setItem("usuario", JSON.stringify({ nome, nascimento, tipo }));
+      alert("Cadastro realizado com sucesso!");
+      mostrarLogin();
+    }
+  
+    function fazerLogin() {
+      const nome = document.getElementById("loginNome").value;
+      const nascimento = document.getElementById("loginNascimento").value;
+      const usuario = JSON.parse(localStorage.getItem("usuario"));
+      if (usuario && usuario.nome === nome && usuario.nascimento === nascimento) {
+        usuarioLogado = usuario;
+        document.getElementById("login").classList.add("hidden");
+        mostrarLivros();
+      } else {
+        alert("Usuário não encontrado. Cadastre-se primeiro.");
+      }
+    }
+  
+    function mostrarLivros() {
+      const vitrine = document.getElementById("vitrine");
+      const container = document.getElementById("livrosContainer");
+      vitrine.classList.remove("hidden");
+      container.innerHTML = "";
+      livros.forEach((livro, index) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        if (livro.destaque) card.style.border = "2px solid red";
+        card.innerHTML = `
+          <img src="imagens/${livro.imagem}" alt="${livro.titulo}" />
+          <h3>${livro.titulo}</h3>
+          <p><strong>${livro.autor}</strong></p>
+          <p class="sinopse">${livro.sinopse}</p>
+          <p class="estoque">Estoque: <span id="estoque-${index}">${livro.estoque}</span></p>
+          <button class="btn-emprestar" onclick="emprestarLivro(${index})">Emprestar</button>
+          <button class="btn-devolver" onclick="devolverLivro(${index})">Devolver</button>
+          <button class="btn-renovar" id="renovar-${index}" onclick="renovarLivro(${index})" style="display:none; margin-top: 5px;">Renovar</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+  
+    function emprestarLivro(i) {
+      if (!usuarioLogado) return;
+      const key = `${usuarioLogado.nome}-${i}`;
+  
+      if (livros[i].estoque > 0 && !mapaDeEmprestimos[key]) {
+        livros[i].estoque--;
+        document.getElementById(`estoque-${i}`).innerText = livros[i].estoque;
+        const hoje = new Date();
+        const devolucao = new Date();
+        devolucao.setDate(hoje.getDate() + 15);
+        mapaDeEmprestimos[key] = {
+          dataEmprestimo: hoje,
+          dataDevolucao: devolucao,
+          renovado: false
+        };
+        alert(`${usuarioLogado.nome} pegou "${livros[i].titulo}" emprestado!\nData de devolução: ${devolucao.toLocaleDateString()}`);
+        document.getElementById(`renovar-${i}`).style.display = "inline-block";
+      } else if (mapaDeEmprestimos[key]) {
+        alert("Você já pegou esse livro.");
+      } else {
+        alert("Esse livro está esgotado no momento.");
+      }
+    }
+  
+    function renovarLivro(i) {
+      if (!usuarioLogado) return;
+      const key = `${usuarioLogado.nome}-${i}`;
+      const emprestimo = mapaDeEmprestimos[key];
+      if (emprestimo && !emprestimo.renovado) {
+        emprestimo.dataDevolucao.setDate(emprestimo.dataDevolucao.getDate() + 15);
+        emprestimo.renovado = true;
+        alert(`Renovação realizada!\nNova data de devolução: ${emprestimo.dataDevolucao.toLocaleDateString()}`);
+      } else {
+        alert("Você já renovou esse livro.");
+      }
+    }
+  
+    function devolverLivro(i) {
+      if (!usuarioLogado) return;
+      const key = `${usuarioLogado.nome}-${i}`;
+      if (mapaDeEmprestimos[key]) {
+        delete mapaDeEmprestimos[key];
+        livros[i].estoque++;
+        document.getElementById(`estoque-${i}`).innerText = livros[i].estoque;
+        document.getElementById(`renovar-${i}`).style.display = "none";
+        alert(`${usuarioLogado.nome} devolveu "${livros[i].titulo}". Obrigada!`);
+      } else {
+        alert("Você ainda não pegou esse livro.");
+      }
+    }
+  </script>
+  
+    
+</body>
+</html>
