@@ -209,10 +209,10 @@
     © 2025 Mônica Lima<br/>
     Animação Cultural
   </footer>
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
-
+ <!-- 🟢 Firebase compat: deve vir ANTES de usar Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  
   <script>
     const frases = [
       `"A leitura é, provavelmente, uma outra maneira de estar em um lugar." — José Saramago`,
@@ -401,28 +401,37 @@
     appId: "1:942375721594:web:95fcf3c05e5b7aeb3279c3"
   };
 
-  // Inicializa o Firebase
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+<!-- 🔵 Seu script principal que usa firebase.initializeApp e db -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBDx8P3EBS_PxulDBGLG03JYBztx2NsvXY",
+      authDomain: "bookflix-72bf6.firebaseapp.com",
+      databaseURL: "https://bookflix-72bf6-default-rtdb.firebaseio.com",
+      projectId: "bookflix-72bf6",
+      storageBucket: "bookflix-72bf6.appspot.com",
+      messagingSenderId: "942375721594",
+      appId: "1:942375721594:web:95fcf3c05e5b7aeb3279c3"
+    };
 
-  // Função para listar os usuários
-  function listarUsuarios() {
-    db.collection("usuarios").get().then((querySnapshot) => {
-      if (querySnapshot.empty) {
-        console.log("Nenhum usuário cadastrado.");
-      } else {
-        querySnapshot.forEach((doc) => {
-          const dados = doc.data();
-          console.log("Usuário:", dados.nome, "-", dados.tipo, "-", dados.dataNascimento);
-        });
-      }
-    }).catch((error) => {
-      console.error("Erro ao buscar usuários:", error);
-    });
-  }
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-  // Chama a função ao carregar a página
-  window.onload = listarUsuarios;
+    function listarUsuarios() {
+      db.collection("usuarios").get().then((querySnapshot) => {
+        if (querySnapshot.empty) {
+          console.log("Nenhum usuário cadastrado.");
+        } else {
+          querySnapshot.forEach((doc) => {
+            const dados = doc.data();
+            console.log("Usuário:", dados.nome, "-", dados.tipo, "-", dados.dataNascimento);
+          });
+        }
+      }).catch((error) => {
+        console.error("Erro ao buscar usuários:", error);
+      });
+    }
+
+    window.onload = listarUsuarios;
   </script>  
 </body>
 </html>
