@@ -436,6 +436,18 @@
     document.getElementById('tela-login').style.display = 'none';
     document.getElementById('tela-cadastro').style.display = 'block';
   }
+  <script>
+  // Função para mostrar a tela de cadastro e esconder o login
+  function mostrarCadastro() {
+    document.getElementById('tela-login').style.display = 'none';
+    document.getElementById('tela-cadastro').style.display = 'block';
+  }
+
+  // Função para voltar ao login (caso precise)
+  function mostrarLogin() {
+    document.getElementById('tela-cadastro').style.display = 'none';
+    document.getElementById('tela-login').style.display = 'block';
+  }
   </script>  
 </body>
 </html>
